@@ -1,10 +1,6 @@
-import psutil
 from tkinter import *
 from tkinter import ttk
-import datetime
-import os, platform, subprocess, re
-import sys
-import cpuinfo
+import os, platform, subprocess, re, socket, sys, cpuinfo, psutil, datetime
 
 root = Tk()
 root.geometry("800x500")
@@ -31,7 +27,10 @@ processor_info = cpuinfo.cpuinfo.get_cpu_info()['brand_raw']
 
 ethernet_info = network_info['Ethernet'][0]
 
-
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+current_ip = s.getsockname()[0]
+s.close()
 tab_one_data = [
     [computer_name, "Computer Name: "],
     [os_details, "OS Information: "],
@@ -39,9 +38,12 @@ tab_one_data = [
     [processor_info, "Processor Details: "],
     [memory_details, "Memory Details: "],
     [partition_info, "Partition Info: "],
-    [ethernet_info], "Ethernet Info: "
+    [ethernet_info, "Ethernet Info: "],
+    [current_ip, "Current Address"]
 ]
-
+for info in network_info:
+    temp_list = [network_info[str(info)][1][1], info]
+    tab_one_data.append(temp_list)
 def LineItem(tab, row_num, item_data, description):
     variables = []
     for item in tab_one_data:
