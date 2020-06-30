@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-import os, platform, subprocess, re, socket, sys, cpuinfo, psutil, datetime
+import os, platform, subprocess, re, socket, sys, cpuinfo, psutil, datetime, openpyxl
 
 root = Tk()
 root.geometry("800x500")
