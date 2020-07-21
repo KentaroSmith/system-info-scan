@@ -18,7 +18,7 @@ tab1 = ttk.Frame(tab_control)
 tab_control.add(tab1, text="Hardware Info")
 tab2 = ttk.Frame(tab_control)
 tab_control.add(tab2, text="Log Entry")
-tab3 = ttak.Frame(tab_control)
+tab3 = ttk.Frame(tab_control)
 tab_control.add(tab3, text = "Initial Setup")
 
 wb = openpyxl.load_workbook("log.xlsx")
@@ -83,7 +83,10 @@ tab_two_data = [
 
 tab_three_data = [
     [arc_gis, "Arc GIS"],
-    [foxit_phantom, "Foxit Phantom"]
+    [foxit_phantom, "Foxit Phantom"],
+    [cis_infinity, "CIS Infinity"],
+    [bluebeam, "Bluebeam"],
+    [lansweeper_agent, "LAN Sweeper Agent"]
 ]
 
 for info in network_info:
@@ -92,31 +95,41 @@ for info in network_info:
 #Save function
 def new_device(*args):
     ws = wb["new_inventory"]
-    for row in range(2, ws.max_row + 1):
-        for column in "A":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = computer_name
-        for column in "C":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"
-        for column in "D":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"#Manufacurer 
-        for column in "E":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"#Model Type
-        for column in "F":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"#Chasis type
-        for column in "G":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"#Serial number
-        for column in "I":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = user
-        for column in "K":
-            cell_name = "{}{}".format(column, row)
-            ws[cell_name] = "Y"
+    row = ws.max_row + 1
+    for column in "A":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = computer_name
+    for column in "C":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"
+    for column in "D":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"#Manufacurer 
+    for column in "E":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"#Model Type
+    for column in "F":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"#Chasis type
+    for column in "G":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"#Serial number
+    for column in "I":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = user.get()
+    for column in "K":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"
+    for column in "S":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = str(arc_gis.get())
+    for column in "W":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = str(foxit_phantom.get())
+    for column in "Z":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = str(bluebeam.get())
+
 
 def maint_log(*args):
     ws = wb["repair_notes"]
@@ -178,6 +191,11 @@ def LineItem(tab, tab_data, row_num, item_data, description):
         else:
             variables[0].delete(0, END)
             variables[0].insert(0, item_data)
+    else:
+        variables[0] = ttk.Checkbutton(tab, variable=item_data, onvalue = 1, offvalue = 0 )
+        variables[1] = Label(tab, text = description)
+        variables[1].grid(column = 2, row = row_num)
+        variables[0].grid(column = 3, row = row_num)
 
 
 def tab_display(tab, tab_data):
@@ -188,9 +206,9 @@ def tab_display(tab, tab_data):
 
 tab_display(tab1, tab_one_data)
 tab_display(tab2, tab_two_data)
-
+tab_display(tab3, tab_three_data)
 ttk.Button(tab2, text="Save Data", command=maint_log).grid(column = 2, row = 15, sticky = E)
-
+ttk.Button(tab3, text="Save Data", command=new_device).grid(column = 2, row = 15, sticky = E)
 
 """ print(platform.machine())
 print(platform.platform())
