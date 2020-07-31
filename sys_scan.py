@@ -20,6 +20,8 @@ tab2 = ttk.Frame(tab_control)
 tab_control.add(tab2, text="Log Entry")
 tab3 = ttk.Frame(tab_control)
 tab_control.add(tab3, text = "Initial Setup")
+tab4 = ttk.Frame(tab_control)
+tab_control.add(tab4, text = "Software")
 
 wb = openpyxl.load_workbook("log.xlsx")
 
@@ -40,9 +42,9 @@ if network_info.get('Ethernet') ==True:
     ethernet_info = network_info['Ethernet'][0]
 else:
     ethernet_info = False
-user = StringVar()
+user = StringVar("")
 notes = Text(tab2, height = 3, width = 50, wrap = WORD)
-location = StringVar()
+location = StringVar("")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
@@ -55,7 +57,15 @@ foxit_phantom = IntVar()
 cis_infinity = IntVar()
 bluebeam = IntVar()
 lansweeper_agent = IntVar()
-
+arc_pro = IntVar()
+autocad = IntVar()
+lucity_desktop = IntVar()
+serial_number = StringVar()
+manufacturer = StringVar()
+model = StringVar()
+inventory_year = datetime.date.today().__format__("%Y")
+inventory_year = datetime.date.today().__format__("%m")
+description = StringVar()
 
 tab_one_data = [
     [computer_name, "Computer Name: "],
@@ -82,11 +92,21 @@ tab_two_data = [
 ]
 
 tab_three_data = [
+    [serial_number, "Serial Number"],
+    [manufacturer, "Manufacturer"],
+    [model, "Model"],
+    [description, "Description"]
+]
+
+tab_four_data = [
     [arc_gis, "Arc GIS"],
     [foxit_phantom, "Foxit Phantom"],
     [cis_infinity, "CIS Infinity"],
     [bluebeam, "Bluebeam"],
-    [lansweeper_agent, "LAN Sweeper Agent"]
+    [lansweeper_agent, "LAN Sweeper Agent"],
+    [arc_pro, "ArcGIS Pro"],
+    [autocad, "AutoCAD"],
+    [lucity_desktop, "Lucity Desktop"]
 ]
 
 for info in network_info:
@@ -99,37 +119,40 @@ def new_device(*args):
     for column in "A":
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = computer_name
+    for column in "B":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = "Y"
     for column in "C":
         cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"
+        ws[cell_name] = manufacturer.get()#Manufacurer 
     for column in "D":
         cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"#Manufacurer 
+        ws[cell_name] = model.get()#Model Type
     for column in "E":
         cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"#Model Type
+        ws[cell_name] = description.get()#Chasis type
     for column in "F":
         cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"#Chasis type
-    for column in "G":
-        cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"#Serial number
-    for column in "I":
+        ws[cell_name] = serial_number.get()#Serial number
+    for column in "H":
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = user.get()
-    for column in "K":
+    for column in "I":
         cell_name = "{}{}".format(column, row)
-        ws[cell_name] = "Y"
-    for column in "S":
+        ws[cell_name] = location.get()
+    for column in "Q":
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = str(arc_gis.get())
-    for column in "W":
+    for column in "U":
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = str(foxit_phantom.get())
-    for column in "Z":
+    for column in "X":
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = str(bluebeam.get())
-
+    for column in "Y":
+        cell_name = "{}{}".format(column, row)
+        ws[cell_name] = str(lansweeper_agent.get())
+    wb.save(filename="log.xlsx")
 
 def maint_log(*args):
     ws = wb["repair_notes"]
@@ -191,6 +214,11 @@ def LineItem(tab, tab_data, row_num, item_data, description):
         else:
             variables[0].delete(0, END)
             variables[0].insert(0, item_data)
+    elif tab == tab3:
+        variables[0] = ttk.Entry(tab, textvariable=item_data, width = 50)
+        variables[1] = Label(tab, text = description)
+        variables[1].grid(column = 2, row = row_num)
+        variables[0].grid(column = 3, row = row_num)
     else:
         variables[0] = ttk.Checkbutton(tab, variable=item_data, onvalue = 1, offvalue = 0 )
         variables[1] = Label(tab, text = description)
@@ -207,6 +235,7 @@ def tab_display(tab, tab_data):
 tab_display(tab1, tab_one_data)
 tab_display(tab2, tab_two_data)
 tab_display(tab3, tab_three_data)
+tab_display(tab4, tab_four_data)
 ttk.Button(tab2, text="Save Data", command=maint_log).grid(column = 2, row = 15, sticky = E)
 ttk.Button(tab3, text="Save Data", command=new_device).grid(column = 2, row = 15, sticky = E)
 
