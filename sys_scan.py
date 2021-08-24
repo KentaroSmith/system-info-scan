@@ -24,7 +24,7 @@ tab4 = ttk.Frame(tab_control)
 tab_control.add(tab4, text = "Software")
 
 wb = openpyxl.load_workbook("log.xlsx")
-
+powershell = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 
 
 computer_name = platform.node()
@@ -60,12 +60,24 @@ lansweeper_agent = IntVar(value=0)
 arc_pro = IntVar(value=0)
 autocad = IntVar(value=0)
 lucity_desktop = IntVar(value=0)
+firefox = IntVar(value=0)
 serial_number = StringVar()
 manufacturer = StringVar()
 model = StringVar()
 inventory_year = datetime.date.today().__format__("%Y")
 inventory_year = datetime.date.today().__format__("%m")
 description = StringVar()
+software_list = [
+    [arc_gis, "arcMap.ps1"], 
+    [foxit_phantom, "FoxitPhantom.ps1"], 
+    [cis_infinity,"CISInfinity.ps1"], 
+    [bluebeam,"bluebeam19.ps1"], 
+    [lansweeper_agent,"LANSweeper.ps1"], 
+    [arc_pro,"ArcPro.ps1"], 
+    [autocad,"AutoCAD.ps1"], 
+    [lucity_desktop,"LucityDesktop.ps1"],
+    [firefox, "FireFox.ps1"]
+]
 
 tab_one_data = [
     [computer_name, "Computer Name: "],
@@ -106,7 +118,8 @@ tab_four_data = [
     [lansweeper_agent, "LAN Sweeper Agent"],
     [arc_pro, "ArcGIS Pro"],
     [autocad, "AutoCAD"],
-    [lucity_desktop, "Lucity Desktop"]
+    [lucity_desktop, "Lucity Desktop"],
+    [firefox, "Fire Fox"]
 ]
 
 for info in network_info:
@@ -153,6 +166,14 @@ def new_device(*args):
         cell_name = "{}{}".format(column, row)
         ws[cell_name] = str(lansweeper_agent.get())
     wb.save(filename="log.xlsx")
+#Installation proceedure
+def install(*args):
+    for item in software_list:
+        if (item[0].get() == 1):
+            process_result = subprocess.run([powershell, ".\\scripts\\"+str(item[1])], stdout = subprocess.PIPE, stderr = subprocess.PIPE, universal_newlines = True)
+            print(process_result.returncode)
+            print(process_result.stdout)
+            print(process_result.stderr)
 
 def maint_log(*args):
     ws = wb["repair_notes"]
@@ -238,6 +259,7 @@ tab_display(tab3, tab_three_data)
 tab_display(tab4, tab_four_data)
 ttk.Button(tab2, text="Save Data", command=maint_log).grid(column = 2, row = 15, sticky = E)
 ttk.Button(tab3, text="Save Data", command=new_device).grid(column = 2, row = 15, sticky = E)
+ttk.Button(tab4, text="Run Installs", command=install).grid(column = 2, row = 15, sticky = E)
 
 
 tab_control.pack(expand=1, fill = 'both')

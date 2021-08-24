@@ -1,0 +1,1 @@
+Start-Process "\\citydata\public\InfoSys\Deployment_Apps\Lucity\Lucity_2019R2\LucityDesktop.msi"
