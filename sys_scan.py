@@ -5,6 +5,7 @@ import os, platform, subprocess, re, socket, sys, cpuinfo, psutil, datetime, ope
 root = Tk()
 root.geometry("800x500")
 root.title("System Diagnostic")
+#root.iconbitmap("C:\\Users\\dsmith\\projects\\system-info-scan\\laptop-code.ico")
 mainframe = ttk.Frame(root, padding = "3 3 12 12")
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 style = ttk.Style()
